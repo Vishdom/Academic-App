@@ -35,8 +35,10 @@ def williams_engine(text):
     return zombies
 
 def graff_engine(text):
-    has_they = any(t in text.lower() for t in ["assert", "postulate", "contend", "theorize", "according to", "summarize"])
-    has_pivot = any(p in text.lower() for p in ["nonetheless", "conversely", "however", "whereas", "notwithstanding"])
+    # Detects the "They Say" move (attribution)
+    has_they = any(t in text.lower() for t in ["assert", "postulate", "contend", "theorize", "according to", "summarize", "claims", "argues"])
+    # Detects the "I Say" move (the pivot)
+    has_pivot = any(p in text.lower() for p in ["nonetheless", "conversely", "however", "whereas", "notwithstanding", "but I argue", "consequently"])
     return has_they, has_pivot
 
 # --- 4. NAVIGATION ---
@@ -77,7 +79,7 @@ elif phase == "Module II: Stylistic Surgery":
         with st.expander("Sub-Module 2.1: The Taxonomy of Obscurity", expanded=True):
             st.markdown("Focus on Williams (1990) and the removal of nominalizations.")
 
-# --- 8. MODULE III CONTENT (VERBATIM TEXT) ---
+# --- 8. MODULE III CONTENT (CONCEPTS & VERBATIM TEXT) ---
 elif phase == "Module III: Dialectical Positioning":
     with tab_course:
         st.header("Module III: Dialectical Positioning")
@@ -85,7 +87,6 @@ elif phase == "Module III: Dialectical Positioning":
 
         st.subheader("\"They Say / I Say\": The Moves That Matter in Academic Writing by Gerald Graff and Cathy Birkenstein")
 
-        # VERBATIM TEXT INSERTION
         st.info("""
         This influential textbook aims to demystify academic discourse by reframing writing as a social act of entering ongoing conversations.
         The authors argue that effective persuasion requires writers to first summarize the views of others—the "they say"—to establish a
@@ -96,25 +97,55 @@ elif phase == "Module III: Dialectical Positioning":
         than a mysterious or isolated task.
         """)
 
-        with st.expander("Sub-Module 3.1: The Rhetorical Situation", expanded=True):
+        st.markdown("### The Core Logic: The 'Internal DNA' of Argument")
+
+        col1, col2 = st.columns(2)
+        with col1:
             st.markdown("""
-            - **Objective:** Master the transition from summary to original assertion.
-            - **Primary Reading:** Graff & Birkenstein (2014), Chapters 1-3.
-            - **Key Concept:** Critical thinking as a conversational process.
+            **1. The Primacy of "They Say"**
+            * **Motivation:** You write because you are responding to something.
+            * **Listening:** Summarize views in a way others would recognize.
+            * **Placement:** Establish the context early.
+            """)
+        with col2:
+            st.markdown("""
+            **2. The Response of "I Say"**
+            * **Moves:** Agree, disagree, or a combination of both.
+            * **Nuance:** The "Yes/No" approach allows for complex frameworks.
+            * **Voice:** Blend formal academic terms with popular expressions.
+            """)
+
+        with st.expander("Sub-Module 3.1: Entering the Conversation", expanded=True):
+            st.markdown("""
+            - **The Burkian Parlor:** Listen to the tenor of the argument, then "put in your oar."
+            - **Mapping Claims:** Map your claims relative to others.
+            - **Demystifying Moves:** Using templates as a generative tool for invention.
             """)
 
     with tab_worksheet:
         st.subheader("Worksheet III-A: Dialectical Bridge")
-        st.text_area("Current Scholarly Consensus (The 'They Say'):", key="w3_they")
-        st.selectbox("Rhetorical Pivot:", ["Notwithstanding...", "Conversely...", "However..."], key="w3_pivot")
-        st.text_area("Your Counter-Thesis (The 'I Say'):", key="w3_isay")
+        st.text_area("Current Scholarly Consensus (The 'They Say'):",
+                     placeholder="Identifying and summarizing the views of another group...",
+                     key="w3_they")
+        st.selectbox("Rhetorical Pivot (The 'Yes/No' Move):",
+                     ["Notwithstanding...", "Conversely...", "While I concur with X, I depart on Y...", "However..."],
+                     key="w3_pivot")
+        st.text_area("Your Counter-Thesis (The 'I Say'):",
+                     placeholder="Offering your own argument as a response...",
+                     key="w3_isay")
 
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase III")
+        st.caption("This lab checks for the 'Internal DNA' of your argument.")
         col1, col2 = st.columns(2)
-        with col1: src3 = st.text_area("1️⃣ Source Material:", height=200, key="lab_s3")
-        with col2: rew3 = st.text_area("2️⃣ Scholarly Synthesis:", height=200, key="lab_r3")
+        with col1: src3 = st.text_area("1️⃣ Source Material (The Conversation):", height=200, key="lab_s3")
+        with col2: rew3 = st.text_area("2️⃣ Scholarly Synthesis (Your Oar):", height=200, key="lab_r3")
+
         if src3 and rew3:
             they, pivot = graff_engine(rew3)
-            if they and pivot: st.success("✅ Dialectical 'Move' successfully executed.")
-            else: st.warning("⚠️ Ensure you have both a 'They Say' summary and an 'I Say' pivot.")
+            c1, c2 = st.columns(2)
+            if they: c1.success("✅ 'They Say' move detected.")
+            else: c1.error("❌ Missing scholarly context.")
+
+            if pivot: c2.success("✅ 'I Say' pivot detected.")
+            else: c2.warning("⚠️ Missing dialectical pivot.")
