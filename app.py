@@ -5,7 +5,7 @@ import re
 # --- 1. CORE CONFIG ---
 st.set_page_config(page_title="Academic Synthesis Residency", layout="wide")
 
-# --- 2. RESTORED 4-SOURCE BIBLIOGRAPHY (UPDATED LINK) ---
+# --- 2. THE CORRECT 4-SOURCE BIBLIOGRAPHY ---
 BIBLIOGRAPHY = {
     "Ahrens (2022)": {
         "title": "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking.",
@@ -19,9 +19,9 @@ BIBLIOGRAPHY = {
         "title": "They Say / I Say: The Moves That Matter in Academic Writing.",
         "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"
     },
-    "Seely (2005)": {
-        "title": "The Oxford Guide to Effective Writing and Speaking (3rd Ed).",
-        "link": "https://www.amazon.in/Oxford-Guide-Effective-Writing-Speaking/dp/0198713932"
+    "Neville (2016)": {
+        "title": "The Complete Guide to Referencing and Avoiding Plagiarism (Colin Neville).",
+        "link": "https://www.amazon.com/COMPLETE-GUIDE-REFERENCING-AVOIDING-PLAGIARISM/dp/0335262023"
     }
 }
 
@@ -59,18 +59,20 @@ if phase == "Module I: Epistemological Retrieval":
         Sönke Ahrens argues that successful writing and learning depend on a systematic workflow rather than raw willpower. By converting fleeting thoughts into permanent entries, writers develop arguments from the bottom up.
 
         **The Core Types of Notes:**
-        * **Fleeting Notes:** Temporary reminders to be processed.
+        * **Fleeting Notes:** Temporary reminders to be processed quickly.
         * **Literature Notes:** Capturing the essence of a text in your own words.
         * **Permanent Notes:** Atomic, self-contained ideas filed for the long-term.
         """)
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("- **Atomicity:** Does the note contain exactly one idea?\n- **Independence:** Is the note readable without the source?\n- **Connectivity:** Is it linked to at least one existing note?")
-
+        st.markdown("""
+        * **Atomicity:** Does the note contain exactly one idea?
+        * **Independence:** Is the note readable without the original source context?
+        * **Connectivity:** Is it linked to at least one existing note in your web?
+        """)
     with tab_worksheet:
         st.subheader("Worksheet I: Note Maturation")
         st.text_area("Draft your Permanent Note here:", key="w1")
-
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase I")
         src = st.text_area("Source Text:", key="ls1")
@@ -84,15 +86,17 @@ elif phase == "Module II: Stylistic Surgery":
     with tab_course:
         st.header("Module II: Stylistic Surgery")
         st.subheader("Syllabus & Theory")
-        st.markdown("Focus on identifying **Nominalizations** (Zombie Nouns)—verbs turned into heavy nouns that hide agency and slow down the reader.")
+        st.markdown("Focus on identifying **Nominalizations** (Zombie Nouns)—verbs turned into heavy nouns that hide agency and slow down the reader. Restoration of verbs is the key to 'Clarity and Grace'.")
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("- **Action Restoration:** Are the main actions expressed as verbs?\n- **Character Clarity:** Is the 'subject' of every sentence clearly defined?\n- **Clarity Ratio:** Target 0-1 nominalizations per 20 words.")
-
+        st.markdown("""
+        * **Action Restoration:** Are the main actions expressed as active verbs?
+        * **Character Clarity:** Is the 'subject' of every sentence clearly defined?
+        * **Clarity Ratio:** Aim for a high verb-to-noun density.
+        """)
     with tab_worksheet:
         st.subheader("Worksheet II: Action Identification")
         st.text_input("Sentence to analyze:", key="w2")
-
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase II")
         rew2 = st.text_area("Input your research prose:", key="lr2")
@@ -107,17 +111,19 @@ elif phase == "Module III: Dialectical Positioning":
         st.header("Module III: Dialectical Positioning")
         st.subheader("Syllabus & Theory")
         st.markdown("""
-        Academic writing is a social act. You must summarize the 'They Say' (the context/other views) before asserting your 'I Say'.
+        Academic writing is a social act. You must summarize the 'They Say' (the context/other views) before asserting your 'I Say'. This creates a conversation rather than a lecture.
         """)
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("- **Attribution:** Is the existing conversation acknowledged?\n- **The Pivot:** Is there a clear linguistic bridge (However, Conversely)?\n- **Synthesis:** Does your argument add new value to the discussion?")
-
+        st.markdown("""
+        * **Attribution:** Is the existing scholarly conversation acknowledged?
+        * **The Pivot:** Is there a clear linguistic bridge (e.g., 'However', 'Conversely')?
+        * **Synthesis:** Does your argument add new value to the discussion?
+        """)
     with tab_worksheet:
         st.subheader("Worksheet III: The Pivot")
-        st.text_area("They Say:", key="w3_t")
-        st.text_area("I Say:", key="w3_i")
-
+        st.text_area("They Say (The Context):", key="w3_t")
+        st.text_area("I Say (Your Argument):", key="w3_i")
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase III")
         rew3 = st.text_area("Scholarly Synthesis:", placeholder="Paste your draft here...", key="lr3")
