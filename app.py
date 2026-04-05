@@ -5,11 +5,24 @@ import re
 # --- 1. CORE CONFIG ---
 st.set_page_config(page_title="Academic Synthesis Residency", layout="wide")
 
-# --- 2. BIBLIOGRAPHY ---
+# --- 2. 4-SOURCE BIBLIOGRAPHY ---
 BIBLIOGRAPHY = {
-    "Ahrens (2022)": {"title": "How to Take Smart Notes (Ahrens)", "link": "https://www.amazon.in/How-Take-Smart-Notes-Technique/dp/3982438802"},
-    "Williams (1990)": {"title": "Style: Toward Clarity and Grace (Williams)", "link": "https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416"},
-    "Graff & Birkenstein (2014)": {"title": "They Say / I Say (Graff & Birkenstein)", "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"}
+    "Ahrens (2022)": {
+        "title": "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking.",
+        "link": "https://www.amazon.in/How-Take-Smart-Notes-Technique/dp/3982438802"
+    },
+    "Williams (1990)": {
+        "title": "Style: Toward Clarity and Grace.",
+        "link": "https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416"
+    },
+    "Graff & Birkenstein (2014)": {
+        "title": "They Say / I Say: The Moves That Matter in Academic Writing.",
+        "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"
+    },
+    "Seely (2005)": {
+        "title": "The Oxford Guide to Effective Writing and Speaking.",
+        "link": "https://www.amazon.in/Oxford-Guide-Effective-Writing-Speaking/dp/019965285X"
+    }
 }
 
 # --- 3. ENGINES ---
@@ -32,6 +45,7 @@ def graff_engine(text):
 st.sidebar.title("🎓 Residency Progress")
 phase = st.sidebar.selectbox("Active Module:", ["Module I: Epistemological Retrieval", "Module II: Stylistic Surgery", "Module III: Dialectical Positioning"])
 st.sidebar.divider()
+st.sidebar.subheader("📚 Primary Source Bibliography")
 for key, info in BIBLIOGRAPHY.items():
     st.sidebar.page_link(info["link"], label=info["title"])
 
@@ -41,7 +55,23 @@ tab_course, tab_worksheet, tab_lab = st.tabs(["📖 COURSEWORK & SYLLABUS", "�
 if phase == "Module I: Epistemological Retrieval":
     with tab_course:
         st.header("Module I: Epistemological Retrieval")
-        st.markdown("Sönke Ahrens argues that successful writing and learning depend on a systematic workflow rather than raw willpower... [Full Text Restored]")
+        st.subheader("Syllabus & Theory")
+        st.markdown("""
+        Sönke Ahrens argues that successful writing and learning depend on a systematic workflow rather than raw willpower... [Full Text Restored]
+
+        **The Core Types of Notes**
+        * **Fleeting Notes:** Quick reminders captured on the fly.
+        * **Literature Notes:** Capturing the gist of a text in your own words.
+        * **Permanent Notes:** Self-contained ideas written in full sentences.
+        """)
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("""
+        1. **Independence:** Does the note make sense without the original source?
+        2. **Atomicity:** Does the note contain exactly *one* idea?
+        3. **Connectivity:** Is there a unique address or link to a previous thought?
+        """)
+
     with tab_worksheet:
         st.subheader("Worksheet I: Permanent Note Maturation")
         st.text_area("The Self-Contained Assertion:", key="w1")
@@ -57,23 +87,40 @@ if phase == "Module I: Epistemological Retrieval":
 elif phase == "Module II: Stylistic Surgery":
     with tab_course:
         st.header("Module II: Stylistic Surgery")
-        st.markdown("Focus on restoring agency to the sentence by removing Zombie Nouns.")
+        st.subheader("Syllabus & Theory")
+        st.markdown("Academic writing is often plagued by 'nominalization'—the turning of useful verbs into heavy nouns. Module II focuses on identifying these 'Zombie Nouns' and restoring agency to the sentence.")
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("""
+        1. **Verbal Vitality:** Are the primary actions expressed as verbs rather than nouns?
+        2. **Character Agency:** Is it clear *who* is doing the action?
+        3. **Clarity Score:** Elimination of at least 80% of identified nominalizations.
+        """)
     with tab_worksheet:
+        st.subheader("Worksheet II: Action Identification")
         st.text_input("Identify the Primary Action (Verb):", key="w2")
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase II")
         rew2 = st.text_area("Input your writing:", key="lr2")
         if rew2:
             zombies = williams_engine(rew2)
-            st.warning(f"Zombie Nouns found: {', '.join(zombies)}" if zombies else "✅ No Zombie Nouns found!")
+            if zombies: st.warning(f"Zombie Nouns found: {', '.join(zombies)}")
+            else: st.success("✅ No Zombie Nouns found!")
 
 # --- 7. MODULE III: GRAFF & BIRKENSTEIN ---
 elif phase == "Module III: Dialectical Positioning":
     with tab_course:
         st.header("Module III: Dialectical Positioning")
+        st.subheader("Syllabus & Theory")
         st.markdown("""
-        "They Say / I Say" logic represents the deep, underlying structure—the "internal DNA"—of all effective argument.
-        Writing well means entering into a conversation with others rather than simply expressing ideas in a vacuum.
+        This influential textbook aims to demystify academic discourse by reframing writing as a social act of entering ongoing conversations... [Full Text Restored]
+        """)
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("""
+        1. **Attribution:** Is the 'They Say' clearly stated and attributed?
+        2. **The Pivot:** Does the transition to 'I Say' use a clear contrastive marker?
+        3. **Synthesis:** Does the argument 'put in an oar' into an existing scholarly parlor?
         """)
     with tab_worksheet:
         st.subheader("Worksheet III: The Pivot")
