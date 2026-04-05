@@ -5,7 +5,7 @@ import re
 # --- 1. CORE CONFIG ---
 st.set_page_config(page_title="Academic Synthesis Residency", layout="wide")
 
-# --- 2. 4-SOURCE BIBLIOGRAPHY ---
+# --- 2. RESTORED 4-SOURCE BIBLIOGRAPHY (UPDATED LINK) ---
 BIBLIOGRAPHY = {
     "Ahrens (2022)": {
         "title": "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking.",
@@ -20,24 +20,23 @@ BIBLIOGRAPHY = {
         "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"
     },
     "Seely (2005)": {
-        "title": "The Oxford Guide to Effective Writing and Speaking.",
-        "link": "https://www.amazon.in/Oxford-Guide-Effective-Writing-Speaking/dp/019965285X"
+        "title": "The Oxford Guide to Effective Writing and Speaking (3rd Ed).",
+        "link": "https://www.amazon.in/Oxford-Guide-Effective-Writing-Speaking/dp/0198713932"
     }
 }
 
 # --- 3. ENGINES ---
-def zettel_check(text):
-    return len([s for s in re.split(r'[.!?]+', text) if len(s.split()) > 5]) > 0
-
 def ahrens_engine(original, rewrite):
     return SequenceMatcher(None, original, rewrite).ratio() * 100
 
 def williams_engine(text):
-    zombies = ["tion", "ment", "ance", "ence", "ity", "ness", "ization"]
-    return [w.strip(",.;:") for w in text.split() if any(s in w.lower() for s in zombies)]
+    zombie_suffixes = ["tion", "ment", "ance", "ence", "ity", "ness", "ization"]
+    words = text.split()
+    zombies = [w.strip(",.;:") for w in words if any(s in w.lower() for s in zombie_suffixes)]
+    return zombies
 
 def graff_engine(text):
-    has_they = any(t in text.lower() for t in ["assert", "contend", "theorize", "according to", "summarize", "claims", "argues"])
+    has_they = any(t in text.lower() for t in ["assert", "postulate", "contend", "theorize", "according to", "summarize", "claims", "argues"])
     has_pivot = any(p in text.lower() for p in ["nonetheless", "conversely", "however", "whereas", "notwithstanding", "but I argue"])
     return has_they, has_pivot
 
@@ -57,30 +56,27 @@ if phase == "Module I: Epistemological Retrieval":
         st.header("Module I: Epistemological Retrieval")
         st.subheader("Syllabus & Theory")
         st.markdown("""
-        Sönke Ahrens argues that successful writing and learning depend on a systematic workflow rather than raw willpower... [Full Text Restored]
+        Sönke Ahrens argues that successful writing and learning depend on a systematic workflow rather than raw willpower. By converting fleeting thoughts into permanent entries, writers develop arguments from the bottom up.
 
-        **The Core Types of Notes**
-        * **Fleeting Notes:** Quick reminders captured on the fly.
-        * **Literature Notes:** Capturing the gist of a text in your own words.
-        * **Permanent Notes:** Self-contained ideas written in full sentences.
+        **The Core Types of Notes:**
+        * **Fleeting Notes:** Temporary reminders to be processed.
+        * **Literature Notes:** Capturing the essence of a text in your own words.
+        * **Permanent Notes:** Atomic, self-contained ideas filed for the long-term.
         """)
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("""
-        1. **Independence:** Does the note make sense without the original source?
-        2. **Atomicity:** Does the note contain exactly *one* idea?
-        3. **Connectivity:** Is there a unique address or link to a previous thought?
-        """)
+        st.markdown("- **Atomicity:** Does the note contain exactly one idea?\n- **Independence:** Is the note readable without the source?\n- **Connectivity:** Is it linked to at least one existing note?")
 
     with tab_worksheet:
-        st.subheader("Worksheet I: Permanent Note Maturation")
-        st.text_area("The Self-Contained Assertion:", key="w1")
+        st.subheader("Worksheet I: Note Maturation")
+        st.text_area("Draft your Permanent Note here:", key="w1")
+
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase I")
-        src1 = st.text_area("Source Context:", key="ls1")
-        rew1 = st.text_area("Permanent Note Draft:", key="lr1")
-        if rew1:
-            sim = ahrens_engine(src1, rew1)
+        src = st.text_area("Source Text:", key="ls1")
+        rew = st.text_area("Your Paraphrase:", key="lr1")
+        if rew:
+            sim = ahrens_engine(src, rew)
             st.metric("Cognitive Independence", f"{100-sim:.0f}%")
 
 # --- 6. MODULE II: WILLIAMS ---
@@ -88,24 +84,22 @@ elif phase == "Module II: Stylistic Surgery":
     with tab_course:
         st.header("Module II: Stylistic Surgery")
         st.subheader("Syllabus & Theory")
-        st.markdown("Academic writing is often plagued by 'nominalization'—the turning of useful verbs into heavy nouns. Module II focuses on identifying these 'Zombie Nouns' and restoring agency to the sentence.")
+        st.markdown("Focus on identifying **Nominalizations** (Zombie Nouns)—verbs turned into heavy nouns that hide agency and slow down the reader.")
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("""
-        1. **Verbal Vitality:** Are the primary actions expressed as verbs rather than nouns?
-        2. **Character Agency:** Is it clear *who* is doing the action?
-        3. **Clarity Score:** Elimination of at least 80% of identified nominalizations.
-        """)
+        st.markdown("- **Action Restoration:** Are the main actions expressed as verbs?\n- **Character Clarity:** Is the 'subject' of every sentence clearly defined?\n- **Clarity Ratio:** Target 0-1 nominalizations per 20 words.")
+
     with tab_worksheet:
         st.subheader("Worksheet II: Action Identification")
-        st.text_input("Identify the Primary Action (Verb):", key="w2")
+        st.text_input("Sentence to analyze:", key="w2")
+
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase II")
-        rew2 = st.text_area("Input your writing:", key="lr2")
+        rew2 = st.text_area("Input your research prose:", key="lr2")
         if rew2:
             zombies = williams_engine(rew2)
-            if zombies: st.warning(f"Zombie Nouns found: {', '.join(zombies)}")
-            else: st.success("✅ No Zombie Nouns found!")
+            if zombies: st.warning(f"Zombie Nouns detected: {', '.join(zombies)}")
+            else: st.success("✅ Clean prose! No significant nominalizations found.")
 
 # --- 7. MODULE III: GRAFF & BIRKENSTEIN ---
 elif phase == "Module III: Dialectical Positioning":
@@ -113,23 +107,21 @@ elif phase == "Module III: Dialectical Positioning":
         st.header("Module III: Dialectical Positioning")
         st.subheader("Syllabus & Theory")
         st.markdown("""
-        This influential textbook aims to demystify academic discourse by reframing writing as a social act of entering ongoing conversations... [Full Text Restored]
+        Academic writing is a social act. You must summarize the 'They Say' (the context/other views) before asserting your 'I Say'.
         """)
         st.divider()
         st.subheader("🎯 Module Rubric")
-        st.markdown("""
-        1. **Attribution:** Is the 'They Say' clearly stated and attributed?
-        2. **The Pivot:** Does the transition to 'I Say' use a clear contrastive marker?
-        3. **Synthesis:** Does the argument 'put in an oar' into an existing scholarly parlor?
-        """)
+        st.markdown("- **Attribution:** Is the existing conversation acknowledged?\n- **The Pivot:** Is there a clear linguistic bridge (However, Conversely)?\n- **Synthesis:** Does your argument add new value to the discussion?")
+
     with tab_worksheet:
         st.subheader("Worksheet III: The Pivot")
-        st.text_area("The 'They Say' (Summary):", key="w3_t")
-        st.text_area("The 'I Say' (Assertion):", key="w3_i")
+        st.text_area("They Say:", key="w3_t")
+        st.text_area("I Say:", key="w3_i")
+
     with tab_lab:
         st.header("🧪 Analytical Lab: Phase III")
-        rew3 = st.text_area("Scholarly Synthesis:", placeholder="Paste your 'They Say / I Say' draft here...", key="lr3")
+        rew3 = st.text_area("Scholarly Synthesis:", placeholder="Paste your draft here...", key="lr3")
         if rew3:
             they, pivot = graff_engine(rew3)
-            if they and pivot: st.success("✅ Dialectical 'Move' successful!")
-            else: st.error("❌ Missing 'They Say' context or 'I Say' pivot.")
+            if they and pivot: st.success("✅ Dialectical 'Move' detected! You have established a conversation.")
+            else: st.error("❌ Missing 'They Say' context or 'I Say' pivot marker.")
