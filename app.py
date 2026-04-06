@@ -1,16 +1,33 @@
 import streamlit as st
 from difflib import SequenceMatcher
-import re
 
-# --- 1. CORE CONFIG ---
-st.set_page_config(page_title="Academic Synthesis Residency", layout="wide")
+# --- 1. CORE CONFIG & SESSION STATE ---
+st.set_page_config(page_title="Academic Writing Synthesis Lab", layout="wide")
 
-# --- 2. BIBLIOGRAPHY ---
+# Persistent memory keys
+input_keys = ["w1", "ls1", "lr1", "w2", "lr2", "w3_t", "w3_i", "lr3"]
+for key in input_keys:
+    if key not in st.session_state:
+        st.session_state[key] = ""
+
+# --- 2. THE BIBLIOGRAPHY ---
 BIBLIOGRAPHY = {
-    "Ahrens (2022)": {"title": "How to Take Smart Notes", "link": "https://www.amazon.in/How-Take-Smart-Notes-Technique/dp/3982438802"},
-    "Williams (1990)": {"title": "Style: Toward Clarity and Grace", "link": "https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416"},
-    "Graff & Birkenstein (2014)": {"title": "They Say / I Say", "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"},
-    "Neville (2016)": {"title": "Referencing & Avoiding Plagiarism", "link": "https://www.amazon.com/COMPLETE-GUIDE-REFERENCING-AVOIDING-PLAGIARISM/dp/0335262023"}
+    "Ahrens (2022)": {
+        "title": "How to Take Smart Notes: One Simple Technique to Boost Writing, Learning and Thinking.",
+        "link": "https://www.amazon.in/How-Take-Smart-Notes-Technique/dp/3982438802"
+    },
+    "Williams (1990)": {
+        "title": "Style: Toward Clarity and Grace.",
+        "link": "https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416"
+    },
+    "Graff & Birkenstein (2014)": {
+        "title": "They Say / I Say: The Moves That Matter in Academic Writing.",
+        "link": "https://www.amazon.in/They-Say-Matter-Academic-Writing/dp/0393631672"
+    },
+    "Neville (2016)": {
+        "title": "The Complete Guide to Referencing and Avoiding Plagiarism (Colin Neville).",
+        "link": "https://www.amazon.com/COMPLETE-GUIDE-REFERENCING-AVOIDING-PLAGIARISM/dp/0335262023"
+    }
 }
 
 # --- 3. ENGINES ---
@@ -26,84 +43,123 @@ def graff_engine(text):
     has_pivot = any(p in text.lower() for p in ["nonetheless", "conversely", "however", "whereas", "notwithstanding", "but I argue"])
     return has_they, has_pivot
 
-# --- 4. SIDEBAR & SOCIALS ---
-st.sidebar.title("🎓 Academic Residency")
-st.sidebar.markdown("Welcome to the **Synthesis Lab**. Refine your research from design to dialectic.")
-
+# --- 4. SIDEBAR ---
+st.sidebar.title("🎓 Academic Writing Synthesis Lab")
+st.sidebar.markdown("""
+Welcome to the **Synthesis Lab**. Refine your research from design to dialectic.
+This environment is designed to bridge the gap between formal research and functional prose.
+""")
 st.sidebar.divider()
-phase = st.sidebar.selectbox("Active Module:", ["Module I: Epistemological Retrieval", "Module II: Stylistic Surgery", "Module III: Dialectical Positioning"])
 
-st.sidebar.divider()
-st.sidebar.subheader("🔗 Connect with Vishdom")
-st.sidebar.page_link("https://www.linkedin.com/in/vishpatil/", label="LinkedIn", icon="🌐")
-st.sidebar.page_link("https://github.com/Vishdom", label="GitHub", icon="💻")
+phase = st.sidebar.selectbox("Active Module:",
+    ["Module I: Epistemological Retrieval",
+     "Module II: Stylistic Surgery",
+     "Module III: Dialectical Positioning"])
 
 st.sidebar.divider()
 st.sidebar.subheader("📚 Bibliography")
 for key, info in BIBLIOGRAPHY.items():
     st.sidebar.page_link(info["link"], label=info["title"])
 
+# Small-font social links at the bottom
+st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
+st.sidebar.divider()
+st.sidebar.markdown("""
+<div style="font-size: 11px; color: grey;">
+    Connect with Vishdom:<br>
+    <a href="https://www.linkedin.com/in/vishpatil/" target="_blank" style="color: grey; text-decoration: none;">🔗 LinkedIn</a> |
+    <a href="https://github.com/Vishdom" target="_blank" style="color: grey; text-decoration: none;">💻 GitHub</a>
+</div>
+""", unsafe_allow_html=True)
+
 # --- 5. MAIN INTERFACE ---
 tab_course, tab_worksheet, tab_lab = st.tabs(["📖 COURSEWORK & SYLLABUS", "📝 RESEARCH WORKSHEETS", "🧪 ANALYTICAL LAB"])
 
-# [Logic for Modules I, II, and III remains consistent as per previous versions]
 if phase == "Module I: Epistemological Retrieval":
     with tab_course:
         st.header("Module I: Epistemological Retrieval")
         st.subheader("Syllabus & Theory")
-        st.markdown("Sönke Ahrens argues that successful writing depends on a systematic workflow. Use permanent notes to build arguments from the bottom up.")
+        st.markdown("""
+        Sönke Ahrens argues that successful writing and learning depend on a systematic workflow. By converting fleeting thoughts into permanent entries, writers develop arguments from the bottom up.
+
+        **The Core Types of Notes:**
+        * **Fleeting Notes:** Temporary reminders.
+        * **Literature Notes:** Capturing the essence of a text in your own words.
+        * **Permanent Notes:** Atomic, self-contained ideas.
+        """)
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("* **Atomicity:** One idea per note.\n* **Independence:** Readable without the original source.\n* **Connectivity:** Linked to your existing web of knowledge.")
     with tab_worksheet:
-        st.text_area("Draft your Permanent Note:", key="w1")
+        st.session_state.w1 = st.text_area("Draft your Permanent Note:", value=st.session_state.w1)
     with tab_lab:
-        src = st.text_area("Source Text:", key="ls1")
-        rew = st.text_area("Your Paraphrase:", key="lr1")
-        if rew: st.metric("Independence", f"{100-ahrens_engine(src, rew):.0f}%")
+        st.header("🧪 Analytical Lab: Phase I")
+        st.session_state.ls1 = st.text_area("Source Text:", value=st.session_state.ls1)
+        st.session_state.lr1 = st.text_area("Your Paraphrase:", value=st.session_state.lr1)
+        if st.session_state.lr1:
+            st.metric("Cognitive Independence", f"{100-ahrens_engine(st.session_state.ls1, st.session_state.lr1):.0f}%")
 
 elif phase == "Module II: Stylistic Surgery":
     with tab_course:
         st.header("Module II: Stylistic Surgery")
-        st.markdown("Eliminate **Nominalizations** to restore agency to your prose.")
+        st.subheader("Syllabus & Theory")
+        st.markdown("""
+        Focus on identifying **Nominalizations** (Zombie Nouns)—verbs turned into heavy nouns that hide agency. Restoration of verbs is the key to 'Clarity and Grace' as proposed by Joseph Williams.
+        """)
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("* **Action Restoration:** Main actions expressed as active verbs.\n* **Character Clarity:** The 'subject' is clearly defined.\n* **Clarity Ratio:** High verb-to-noun density.")
     with tab_worksheet:
-        st.text_input("Analyze sentence:", key="w2")
+        st.session_state.w2 = st.text_input("Sentence to analyze:", value=st.session_state.w2)
     with tab_lab:
-        rew2 = st.text_area("Input research prose:", key="lr2")
-        if rew2:
-            zombies = williams_engine(rew2)
-            if zombies: st.warning(f"Zombies: {', '.join(zombies)}")
-            else: st.success("✅ Clean!")
+        st.header("🧪 Analytical Lab: Phase II")
+        st.session_state.lr2 = st.text_area("Input research prose:", value=st.session_state.lr2)
+        if st.session_state.lr2:
+            zombies = williams_engine(st.session_state.lr2)
+            if zombies: st.warning(f"Zombie Nouns detected: {', '.join(zombies)}")
+            else: st.success("✅ Clean prose! Agency restored.")
 
 elif phase == "Module III: Dialectical Positioning":
     with tab_course:
         st.header("Module III: Dialectical Positioning")
-        st.markdown("Establish the 'They Say' context before the 'I Say' pivot.")
+        st.subheader("Syllabus & Theory")
+        st.markdown("""
+        Academic writing is a social act. You must summarize the **'They Say'** (the context) before asserting your **'I Say'**. This creates a conversation rather than a lecture.
+        """)
+        st.divider()
+        st.subheader("🎯 Module Rubric")
+        st.markdown("* **Attribution:** Scholarly conversation acknowledged.\n* **The Pivot:** Clear linguistic bridge (e.g., 'However', 'Conversely').\n* **Synthesis:** Your argument adds new value.")
     with tab_worksheet:
-        st.text_area("They Say:", key="w3_t")
-        st.text_area("I Say:", key="w3_i")
+        st.session_state.w3_t = st.text_area("They Say (Context):", value=st.session_state.w3_t)
+        st.session_state.w3_i = st.text_area("I Say (Argument):", value=st.session_state.w3_i)
     with tab_lab:
-        rew3 = st.text_area("Scholarly Synthesis:", key="lr3")
-        if rew3:
-            they, pivot = graff_engine(rew3)
-            if they and pivot: st.success("✅ Move detected!")
-            else: st.error("❌ Missing context/pivot.")
+        st.header("🧪 Analytical Lab: Phase III")
+        st.session_state.lr3 = st.text_area("Scholarly Synthesis:", value=st.session_state.lr3)
+        if st.session_state.lr3:
+            they, pivot = graff_engine(st.session_state.lr3)
+            if they and pivot: st.success("✅ Dialectical 'Move' detected!")
+            else: st.error("❌ Missing context or pivot marker.")
 
-# --- 6. CONTACT FORM & FOOTER ---
-st.divider()
-st.subheader("📩 Feedback & Collaboration")
-contact_form = """
-<form action="https://formsubmit.co/vishpatilwork@gmail.com" method="POST">
-     <input type="hidden" name="_tracker" value="Academic Residency App">
-     <input type="text" name="name" placeholder="Your Name" required style="width: 100%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; padding: 5px;">
-     <input type="email" name="email" placeholder="Your Email" required style="width: 100%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; padding: 5px;">
-     <textarea name="message" placeholder="Your feedback or research inquiry..." required style="width: 100%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; padding: 5px;"></textarea>
-     <button type="submit" style="background-color: #ff4b4b; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Send Message</button>
-</form>
-"""
-st.markdown(contact_form, unsafe_allow_html=True)
-
+# --- 6. PINNED FOOTER ---
 st.markdown(
     """
-    <div style="text-align: center; color: grey; font-size: 12px; margin-top: 50px;">
-        Created by <b>Vishdom</b> | Academic Synthesis Residency © 2026
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        color: grey;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 11px;
+        z-index: 1000;
+        border-top: 1px solid #f0f2f6;
+    }
+    </style>
+    <div class="footer">
+        Created by <b>Vishdom</b> | Academic Writing Synthesis Lab © 2026
     </div>
     """,
     unsafe_allow_html=True
